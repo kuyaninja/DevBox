@@ -5,6 +5,11 @@ Docker for start your project PHP, with pre-installed phalcon framework v4.1 and
 
 `docker-compose up -d` to run, and docker will start build image.
 
+alternative, you can pull the latest build from Hub, just run this before run `docker-compose up -d` to cut build time in local.
+
+- `docker pull kuyaninja/nginx`
+- `docker pull kuyaninja/php-phalcon`
+
 ### Edit
 
 to edit the container, just edit the Dockerfile in docker folder to meet your needs.
