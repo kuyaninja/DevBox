@@ -1,0 +1,43 @@
+version: '3'
+
+#Docker Networks
+networks:
+  app-network:
+    driver: bridge
+
+services:
+  webserver:
+    build:
+      context: .
+      dockerfile: ./Docker/webserver/Dockerfile
+    image: kuyaninja/nginx:latest
+    container_name: nginx-server
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./source:/var/www
+      - ./Docker/webserver/config/conf.d/:/etc/nginx/conf.d/
+    networks:
+      - app-network
+
+  #PHP Service
+  app:
+    build:
+      context: .
+      dockerfile: ./Docker/php-fpm/Dockerfile
+    image: kuyaninja/php-phalcon:latest
+    container_name: app-server
+    restart: unless-stopped
+    tty: true
+    environment:
+      SERVICE_NAME: app
+      SERVICE_TAGS: dev
+    working_dir: /var/www/app
+    volumes:
+      - ./source:/var/www
+      - ./Doocker/php-fpm/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - app-network
