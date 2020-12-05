@@ -124,7 +124,7 @@ RUN chmod +x /usr/local/bin/docker-phalcon-install-devtools \
 RUN touch /var/log/php-fpm.log \
     && chmod 777 /var/log/php-fpm.log
 
-# app folder
+# src folder
 WORKDIR /var/www/app
 
 # Install Composer
