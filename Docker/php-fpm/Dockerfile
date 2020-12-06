@@ -1,4 +1,4 @@
-FROM php:7.2-fpm-alpine3.12
+FROM php:7.3-fpm-alpine3.12
 
 LABEL maintainer="hallo@kuya.ninja"
 
@@ -24,7 +24,8 @@ ENV PHPIZE_DEPS \
 RUN apk add --update --no-cache $PHPIZE_DEPS
 
 # intl, zip, soap
-RUN apk add --update --no-cache libintl icu icu-dev libxml2-dev \
+RUN apk add --update --no-cache libintl icu icu-dev libxml2-dev libzip libzip-dev \
+    && docker-php-ext-configure zip --with-libzip \
     && docker-php-ext-install intl zip soap
 
 # mysqli, pdo, pdo_mysql, pdo_pgsql
@@ -63,7 +64,7 @@ RUN apk add --update --no-cache imagemagick-dev \
 
 # ssh2
 RUN apk add --update --no-cache libssh2 libssh2-dev \
-    && pecl install ssh2-1 \
+    && pecl install ssh2-1.2 \
     && docker-php-ext-enable ssh2
 
 # opcache
@@ -87,38 +88,7 @@ RUN apk add --update --no-cache openldap-dev \
     && docker-php-ext-install ldap
 
 # phalcon
-ARG PSR_VERSION=1.0.0
-ARG PHALCON_VERSION=4.1.0
-ARG PHALCON_EXT_PATH=php7/64bits
 ARG TIMEZONE=Asia/Jakarta
-
-RUN apk update \
-    && apk add ca-certificates \
-    && update-ca-certificates
-
-RUN set -xe && \
-        # Download PSR, see https://github.com/jbboehr/php-psr
-        curl -LO https://github.com/jbboehr/php-psr/archive/v${PSR_VERSION}.tar.gz && \
-        tar xzf ${PWD}/v${PSR_VERSION}.tar.gz && \
-        # Download Phalcon
-        curl -LO https://github.com/phalcon/cphalcon/archive/v${PHALCON_VERSION}.tar.gz && \
-        tar xzf ${PWD}/v${PHALCON_VERSION}.tar.gz && \
-        docker-php-ext-install -j $(getconf _NPROCESSORS_ONLN) \
-            ${PWD}/php-psr-${PSR_VERSION} \
-            ${PWD}/cphalcon-${PHALCON_VERSION}/build/${PHALCON_EXT_PATH} \
-        && \
-        # Remove all temp files
-        rm -r \
-            ${PWD}/v${PSR_VERSION}.tar.gz \
-            ${PWD}/php-psr-${PSR_VERSION} \
-            ${PWD}/v${PHALCON_VERSION}.tar.gz \
-            ${PWD}/cphalcon-${PHALCON_VERSION} \
-        && \
-        php -m
-
-COPY ./Docker/php-fpm/docker-phalcon-* /usr/local/bin/
-RUN chmod +x /usr/local/bin/docker-phalcon-install-devtools \
-    && /usr/local/bin/docker-phalcon-install-devtools
 
 # log file
 RUN touch /var/log/php-fpm.log \
@@ -137,7 +107,7 @@ RUN printf '[PHP]\ndate.timezone = "%s"\n', ${TIMEZONE} > /usr/local/etc/php/con
 RUN "date"
 
 # install Laravel
-#RUN composer global require laravel/installer
+RUN composer global require laravel/installer
 ENV PATH "$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/root/.composer/vendor/bin"
 
 # port

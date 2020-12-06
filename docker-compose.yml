@@ -28,7 +28,7 @@ services:
     build:
       context: .
       dockerfile: ./Docker/php-fpm/Dockerfile
-    image: kuyaninja/php-phalcon:latest
+    image: kuyaninja/php-laravel:latest
     container_name: src-server
     restart: unless-stopped
     tty: true
