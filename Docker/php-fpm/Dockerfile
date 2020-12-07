@@ -90,6 +90,9 @@ RUN apk add --update --no-cache openldap-dev \
 # phalcon
 ARG TIMEZONE=Asia/Jakarta
 
+# install npm
+RUN apk add --update --no-cache npm
+
 # log file
 RUN touch /var/log/php-fpm.log \
     && chmod 777 /var/log/php-fpm.log

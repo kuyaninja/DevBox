@@ -38,6 +38,6 @@ services:
     working_dir: /var/www
     volumes:
       - /Users/ilyas/Documents/dockershare/www:/var/www
-      - ./Doocker/php-fpm/local.ini:/usr/local/etc/php/conf.d/local.ini
+      - ./Docker/php-fpm/local.ini:/usr/local/etc/php/conf.d/local.ini
     networks:
       - app-network
